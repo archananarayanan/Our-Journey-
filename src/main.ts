@@ -3,12 +3,13 @@ const MAX_POINTS = 10_000;
 const MILESTONE_INTERVAL = 1_000;
 
 /** Static in-memory celebration videos stored in /public/videos/ */
+const BASE = import.meta.env.BASE_URL;
 const CELEBRATION_VIDEOS: string[] = [
-  "/videos/celebration1.mp4",
-  "/videos/celebration2.mp4",
-  "/videos/celebration3.mp4",
-  "/videos/celebration4.mp4",
-  "/videos/celebration5.mp4",
+  `${BASE}videos/celebration1.mp4`,
+  `${BASE}videos/celebration2.mp4`,
+  `${BASE}videos/celebration3.mp4`,
+  `${BASE}videos/celebration4.mp4`,
+  `${BASE}videos/celebration5.mp4`,
 ];
 
 const CELEBRATION_MESSAGES: string[] = [
@@ -26,7 +27,7 @@ const CELEBRATION_MESSAGES: string[] = [
 
 // ─── Persistent storage ───────────────────────────────────────────────────────
 const STORAGE_KEY = "ourJourney";
-const DATA_PATH = "/data/journey.json";
+const DATA_PATH = `${BASE}data/journey.json`;
 
 interface JourneyEntry {
   timestamp: string;
