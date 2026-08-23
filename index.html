@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Journey – Nick & Judy's Love Meter</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 min-h-screen text-white font-sans">
+
+    <!-- Header -->
+    <header class="text-center py-8 px-4">
+      <h1 class="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-lg">
+        💕 Our Journey 💕
+      </h1>
+      <p class="mt-2 text-lg text-purple-200 opacity-80">Nick &amp; Judy — Earning love points together, one adventure at a time 🦊🐰</p>
+    </header>
+
+    <!-- Dashboard Grid -->
+    <main class="max-w-5xl mx-auto px-4 pb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+
+      <!-- Players Card -->
+      <section class="col-span-1 md:col-span-2 bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/20 flex flex-col sm:flex-row items-center gap-6">
+        <!-- Nick -->
+        <div class="flex flex-col items-center gap-2 flex-1">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-5xl shadow-lg">🦊</div>
+          <span class="font-bold text-xl text-orange-300">Nick Wilde</span>
+          <span class="text-sm text-purple-200 opacity-70">The Smooth Fox</span>
+        </div>
+        <!-- Hearts -->
+        <div class="text-5xl animate-pulse">❤️</div>
+        <!-- Judy -->
+        <div class="flex flex-col items-center gap-2 flex-1">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center text-5xl shadow-lg">🐰</div>
+          <span class="font-bold text-xl text-purple-200">Judy Hopps</span>
+          <span class="text-sm text-purple-200 opacity-70">The Determined Bunny</span>
+        </div>
+      </section>
+
+      <!-- Score Card -->
+      <section class="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/20 flex flex-col gap-4">
+        <h2 class="text-2xl font-bold text-pink-300">🏆 Love Score</h2>
+        <div class="text-6xl font-extrabold text-center text-white tabular-nums" id="score-display">0</div>
+        <div class="text-center text-purple-200 text-sm" id="milestone-label">Next milestone: 1,000 pts</div>
+
+        <!-- Progress Bar -->
+        <div class="relative mt-2">
+          <!-- Milestone ticks -->
+          <div class="flex justify-between mb-1" id="milestone-ticks" aria-hidden="true"></div>
+          <!-- Bar container -->
+          <div class="relative w-full h-6 bg-white/10 rounded-full overflow-visible border border-white/20">
+            <!-- Fill -->
+            <div id="progress-fill"
+              class="h-full rounded-full transition-all duration-700 ease-out bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"
+              style="width: 0%"></div>
+            <!-- Milestone markers overlaid -->
+            <div id="milestone-markers" class="absolute inset-0 pointer-events-none"></div>
+          </div>
+          <!-- Min / Max labels -->
+          <div class="flex justify-between text-xs text-purple-300 mt-1">
+            <span>0</span>
+            <span id="max-label">10,000</span>
+          </div>
+        </div>
+
+        <!-- Reached milestones chips -->
+        <div class="flex flex-wrap gap-2 mt-1" id="milestone-chips"></div>
+      </section>
+
+      <!-- Input Card -->
+      <section class="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/20 flex flex-col gap-5">
+        <h2 class="text-2xl font-bold text-pink-300">➕ Add or Lose Love</h2>
+
+        <div class="flex flex-col gap-2">
+          <label for="points-input" class="text-sm text-purple-200 font-semibold">Enter Points</label>
+          <input
+            id="points-input"
+            type="number"
+            min="1"
+            placeholder="e.g. 250"
+            class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/30 text-white text-xl font-bold placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
+          />
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            id="btn-add"
+            class="flex-1 py-3 rounded-2xl font-bold text-lg bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
+          >
+            <span>💖</span> Add Love
+          </button>
+          <button
+            id="btn-lose"
+            class="flex-1 py-3 rounded-2xl font-bold text-lg bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
+          >
+            <span>💔</span> Lose Love
+          </button>
+        </div>
+
+        <!-- Recent action log -->
+        <div class="flex flex-col gap-1 mt-2">
+          <span class="text-xs text-purple-300 font-semibold uppercase tracking-wider">Recent Actions</span>
+          <ul id="action-log" class="text-sm text-purple-100 space-y-1 max-h-32 overflow-y-auto pr-1"></ul>
+        </div>
+      </section>
+
+      <!-- Celebration / Video Panel -->
+      <section id="celebration-panel"
+        class="col-span-1 md:col-span-2 bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/20 flex flex-col items-center gap-4 transition-all duration-500"
+      >
+        <h2 class="text-2xl font-bold text-yellow-300">🎉 Celebration Zone</h2>
+        <p id="celebration-message" class="text-lg text-center text-purple-200">
+          Keep earning points — a celebration awaits at every 1,000! 🌟
+        </p>
+
+        <!-- Video embed -->
+        <div id="video-wrapper" class="w-full max-w-xl rounded-2xl overflow-hidden border-2 border-yellow-400/50 shadow-2xl hidden">
+          <video
+            id="celebration-video"
+            class="w-full rounded-2xl"
+            autoplay
+            muted
+            playsinline
+            controls
+          >
+            <source id="celebration-video-src" src="" type="video/quicktime" />
+            <source id="celebration-video-src-mp4" src="" type="video/mp4" />
+            Your browser does not support this video format.
+          </video>
+        </div>
+
+        <!-- Confetti canvas -->
+        <canvas id="confetti-canvas" class="pointer-events-none fixed inset-0 w-full h-full z-50 hidden"></canvas>
+      </section>
+
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

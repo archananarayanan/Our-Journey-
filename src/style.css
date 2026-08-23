@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Custom scrollbar for action log */
+#action-log::-webkit-scrollbar {
+  width: 4px;
+}
+#action-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+#action-log::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 9999px;
+}
+
+/* Celebration pulse animation */
+@keyframes celebration-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.4); }
+  50% { box-shadow: 0 0 60px rgba(250, 204, 21, 0.9); }
+}
+.celebration-active {
+  animation: celebration-glow 1s ease-in-out infinite;
+}
+
+/* Score bump animation */
+@keyframes score-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.score-bump {
+  animation: score-bump 0.4s ease-out forwards;
+}
