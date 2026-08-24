@@ -154,10 +154,11 @@ body {
 }
 
 #gif-bg img {
-  max-width: 90vw;
-  max-height: 90vh;
-  width: auto;
-  height: auto;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 75vw;
+  height: 75vh;
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
