@@ -5,6 +5,11 @@ body {
   font-family: 'Baloo 2', 'Baloo', system-ui, sans-serif;
 }
 
+
+.font-sofadi {
+  font-family: 'Sofadi One', 'Baloo 2', system-ui, sans-serif;
+}
+
 /* ─── Page background: animated orange → white → blue cycle ─────────────── */
 @keyframes bg-shift {
   0%   { background-position: 0% 50%; }
@@ -233,4 +238,36 @@ body > *:not(#gif-bg) {
 #action-log::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.12);
   border-radius: 9999px;
+}
+
+
+@media (max-width: 640px) {
+  .page-bg {
+    background-size: 300% 300%;
+    animation-duration: 24s;
+  }
+
+  .character-card {
+    padding: 1rem 1.1rem;
+    border-radius: 1.2rem;
+  }
+
+  .character-img-wrap {
+    width: 105px;
+    height: 130px;
+  }
+
+  .character-fallback {
+    font-size: 3rem;
+  }
+
+  #gif-bg img {
+    width: 88vw;
+    height: 52vh;
+    transition: opacity 1.1s ease-in-out;
+  }
+
+  #gif-bg img.gif-visible {
+    opacity: 0.28;
+  }
 }
