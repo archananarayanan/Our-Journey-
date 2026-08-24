@@ -6,20 +6,20 @@
     <title>Our Journey – Nick & Judy's Love Meter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Sofadi+One&display=swap" rel="stylesheet" />
   </head>
   <body class="page-bg min-h-screen text-white font-sans">
 
     <!-- Header -->
-    <header class="text-center py-8 px-4">
-      <h1 class="text-5xl font-extrabold tracking-tight text-shadow-lg" style="color:#1a1a2e; text-shadow: 0 2px 16px rgba(255,140,0,0.4), 0 1px 0 #fff;">
+    <header class="text-center py-6 sm:py-8 px-4">
+      <h1 class="font-sofadi text-3xl sm:text-5xl font-extrabold tracking-tight text-shadow-lg" style="color:#1a1a2e; text-shadow: 0 2px 16px rgba(255,140,0,0.4), 0 1px 0 #fff;">
         💕 Our Journey 💕
       </h1>
-      <p class="mt-2 text-lg font-semibold" style="color:#3a3a6a;">Nick &amp; Judy — Earning love points together, one adventure at a time 🦊🐰</p>
+      <p class="mt-2 text-sm sm:text-lg font-semibold" style="color:#3a3a6a;">Nick &amp; Judy — Earning love points together, one adventure at a time 🦊🐰</p>
     </header>
 
     <!-- Characters -->
-    <section class="flex flex-col sm:flex-row items-center justify-center gap-8 px-4 pb-6">
+    <section class="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-8 px-4 pb-6">
       <!-- Nick -->
       <div class="character-card nick-card flex flex-col items-center gap-3">
         <div class="character-img-wrap">
@@ -28,11 +28,11 @@
                alt="Nick Wilde" class="character-img" />
           <div class="character-fallback" style="display:none;">🦊</div>
         </div>
-        <span class="font-bold text-xl" style="color:#c84b00;">Nick Wilde</span>
-        <span class="text-sm opacity-70" style="color:#6a3a1a;">The Smooth Fox</span>
+        <span class="font-bold text-lg sm:text-xl" style="color:#c84b00;">Nick Wilde</span>
+        <span class="text-xs sm:text-sm opacity-70" style="color:#6a3a1a;">The Smooth Fox</span>
       </div>
       <!-- Hearts -->
-      <div class="text-5xl animate-pulse select-none">❤️</div>
+      <div class="text-3xl sm:text-5xl animate-pulse select-none">❤️</div>
       <!-- Judy -->
       <div class="character-card judy-card flex flex-col items-center gap-3">
         <div class="character-img-wrap">
@@ -41,29 +41,29 @@
                alt="Judy Hopps" class="character-img" />
           <div class="character-fallback" style="display:none;">🐰</div>
         </div>
-        <span class="font-bold text-xl" style="color:#3a52a0;">Judy Hopps</span>
-        <span class="text-sm opacity-70" style="color:#3a3a6a;">The Determined Bunny</span>
+        <span class="font-bold text-lg sm:text-xl" style="color:#3a52a0;">Judy Hopps</span>
+        <span class="text-xs sm:text-sm opacity-70" style="color:#3a3a6a;">The Determined Bunny</span>
       </div>
     </section>
 
     <!-- Progress Section (no card border) -->
-    <section class="max-w-3xl mx-auto px-6 pb-6">
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-6">
       <div class="flex items-center justify-between mb-1">
-        <span class="text-2xl font-bold" style="color:#1a1a2e;">🏆 Love Score</span>
-        <div class="text-5xl font-extrabold tabular-nums" id="score-display" style="color:#c84b00;">0</div>
+        <span class="font-sofadi text-xl sm:text-2xl font-bold" style="color:#1a1a2e;">🏆 Love Score</span>
+        <div class="text-3xl sm:text-5xl font-extrabold tabular-nums" id="score-display" style="color:#c84b00;">0</div>
       </div>
-      <div class="text-center text-sm font-semibold mb-2" id="milestone-label" style="color:#3a52a0;">Next milestone: 1,000 pts</div>
+      <div class="text-center text-xs sm:text-sm font-semibold mb-2" id="milestone-label" style="color:#3a52a0;">Next milestone: 1,000 pts</div>
 
       <!-- Progress Bar -->
       <div class="relative mt-2">
         <div class="flex justify-between mb-1" id="milestone-ticks" aria-hidden="true"></div>
-        <div class="relative w-full h-6 rounded-full overflow-visible border border-white/40" style="background:rgba(255,255,255,0.35);">
+        <div class="relative w-full h-5 sm:h-6 rounded-full overflow-visible border border-white/40" style="background:rgba(255,255,255,0.35);">
           <div id="progress-fill"
             class="h-full rounded-full transition-all duration-700 ease-out"
             style="width: 0%; background: linear-gradient(90deg, #ff8c00, #4a90d9, #ff8c00);"></div>
           <div id="milestone-markers" class="absolute inset-0 pointer-events-none"></div>
         </div>
-        <div class="flex justify-between text-xs mt-1 font-semibold" style="color:#3a52a0;">
+        <div class="flex justify-between text-[10px] sm:text-xs mt-1 font-semibold" style="color:#3a52a0;">
           <span>0</span>
           <span id="max-label">10,000</span>
         </div>
@@ -75,32 +75,32 @@
 
     <!-- Score Updater Card (highlighted, animated on score change) -->
     <section id="score-updater-panel" class="score-updater-card max-w-3xl mx-auto px-4 pb-6">
-      <div class="score-updater-inner rounded-3xl p-6 flex flex-col gap-5">
-        <h2 class="text-2xl font-bold" style="color:#1a1a2e;">➕ Add or Lose Love</h2>
+      <div class="score-updater-inner rounded-3xl p-4 sm:p-6 flex flex-col gap-4 sm:gap-5">
+        <h2 class="text-xl sm:text-2xl font-bold" style="color:#1a1a2e;">➕ Add or Lose Love</h2>
 
         <div class="flex flex-col gap-2">
-          <label for="points-input" class="text-sm font-semibold" style="color:#3a52a0;">Enter Points</label>
+          <label for="points-input" class="text-xs sm:text-sm font-semibold" style="color:#3a52a0;">Enter Points</label>
           <input
             id="points-input"
             type="number"
             min="1"
             placeholder="e.g. 250"
-            class="w-full px-4 py-3 rounded-2xl border border-white/40 text-xl font-bold focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+            class="w-full px-4 py-2.5 sm:py-3 rounded-2xl border border-white/40 text-lg sm:text-xl font-bold focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
             style="background:rgba(255,255,255,0.6); color:#1a1a2e;"
           />
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <button
             id="btn-add"
-            class="flex-1 py-3 rounded-2xl font-bold text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
+            class="flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
             style="background: linear-gradient(135deg, #ff8c00, #e05c00);"
           >
             <span>💖</span> Add Love
           </button>
           <button
             id="btn-lose"
-            class="flex-1 py-3 rounded-2xl font-bold text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
+            class="flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
             style="background: linear-gradient(135deg, #4a6fa5, #2d4a7a);"
           >
             <span>💔</span> Lose Love
@@ -109,8 +109,8 @@
 
         <!-- Recent action log -->
         <div class="flex flex-col gap-1 mt-2">
-          <span class="text-xs font-semibold uppercase tracking-wider" style="color:#3a52a0;">Recent Actions</span>
-          <ul id="action-log" class="text-sm space-y-1 max-h-32 overflow-y-auto pr-1" style="color:#1a1a2e;"></ul>
+          <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider" style="color:#3a52a0;">Recent Actions</span>
+          <ul id="action-log" class="text-xs sm:text-sm space-y-1 max-h-28 sm:max-h-32 overflow-y-auto pr-1" style="color:#1a1a2e;"></ul>
         </div>
 
       </div>
