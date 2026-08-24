@@ -94,6 +94,8 @@ body {
 
 /* ─── Score updater card ─────────────────────────────────────────────────── */
 .score-updater-inner {
+  position: relative;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.72);
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow:
@@ -102,6 +104,47 @@ body {
     inset 0 1px 0 rgba(255,255,255,0.95);
   backdrop-filter: blur(10px);
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.score-updater-inner::before,
+.score-updater-inner::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+@keyframes updater-confetti-fall {
+  0% {
+    transform: translateY(-22%) scale(1.04);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(26%) scale(1);
+    opacity: 0;
+  }
+}
+
+.score-updater-inner.milestone-confetti::before {
+  opacity: 1;
+  background-image:
+    radial-gradient(circle, rgba(255,140,0,0.9) 0 4px, transparent 5px),
+    radial-gradient(circle, rgba(74,144,217,0.85) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(224,92,0,0.85) 0 2px, transparent 3px),
+    radial-gradient(circle, rgba(255,255,255,0.9) 0 2.5px, transparent 3.5px);
+  background-size: 140px 140px, 120px 120px, 90px 90px, 110px 110px;
+  background-position: 10% 0%, 72% -10%, 42% 8%, 88% 12%;
+  animation: updater-confetti-fall 1.8s ease-out forwards;
+}
+
+.score-updater-inner.milestone-confetti::after {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 25% 0%, rgba(255,140,0,0.22), transparent 55%),
+    radial-gradient(circle at 78% 10%, rgba(74,144,217,0.22), transparent 52%);
+  animation: updater-confetti-fall 1.8s ease-out forwards;
 }
 
 /* ─── Score updater glow animations ──────────────────────────────────────── */
@@ -164,6 +207,10 @@ body {
   transition: opacity 0.8s ease-in-out;
   border: none;
   background: transparent;
+  filter: saturate(1.05) contrast(1.04) drop-shadow(0 0 30px rgba(255, 255, 255, 0.24));
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,0.95) 36%, rgba(0,0,0,0.62) 63%, transparent 84%);
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,0.95) 36%, rgba(0,0,0,0.62) 63%, transparent 84%);
 }
 
 #gif-bg img.gif-visible {

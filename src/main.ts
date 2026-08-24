@@ -93,6 +93,7 @@ let lastCelebratedMilestone = 0;
 let celebrationHideTimer: ReturnType<typeof setTimeout> | null = null;
 let confettiAnimationFrameId: number | null = null;
 let confettiRunId = 0;
+let updaterConfettiTimer: ReturnType<typeof setTimeout> | null = null;
 
 async function initState(): Promise<void> {
   try {
@@ -324,7 +325,21 @@ function celebrate(milestone: number): void {
   // Restart gif background cycling for visual freshness
   startGifBackground();
 
+  launchUpdaterConfetti();
   launchConfetti();
+}
+
+function launchUpdaterConfetti(): void {
+  if (!scoreUpdaterInner) return;
+  scoreUpdaterInner.classList.remove("milestone-confetti");
+  void scoreUpdaterInner.offsetWidth;
+  scoreUpdaterInner.classList.add("milestone-confetti");
+
+  if (updaterConfettiTimer !== null) clearTimeout(updaterConfettiTimer);
+  updaterConfettiTimer = setTimeout(() => {
+    scoreUpdaterInner.classList.remove("milestone-confetti");
+    updaterConfettiTimer = null;
+  }, 1_900);
 }
 
 // ─── Confetti ─────────────────────────────────────────────────────────────────
