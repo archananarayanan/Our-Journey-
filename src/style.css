@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* ─── Zootopia-style font (Baloo 2 — closest Google Fonts match) ─────────── */
+body {
+  font-family: 'Baloo 2', 'Baloo', system-ui, sans-serif;
+}
+
 /* ─── Page background: animated orange → white → blue cycle ─────────────── */
 @keyframes bg-shift {
   0%   { background-position: 0% 50%; }
