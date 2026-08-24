@@ -93,6 +93,10 @@ body {
   backdrop-filter: blur(8px);
 }
 
+.journey-characters {
+  flex-wrap: nowrap;
+}
+
 .nick-card {
   border-top: 3px solid #ff8c00;
   box-shadow:
@@ -385,23 +389,27 @@ body > *:not(#gif-bg) {
 
 
 @media (max-width: 640px) {
+  .journey-characters {
+    align-items: flex-start;
+  }
+
   .page-bg {
     background-size: 300% 300%;
     animation-duration: 24s;
   }
 
   .character-card {
-    padding: 1rem 1.1rem;
-    border-radius: 1.2rem;
+    padding: 0.75rem 0.7rem;
+    border-radius: 1rem;
   }
 
   .character-img-wrap {
-    width: 105px;
-    height: 130px;
+    width: 82px;
+    height: 104px;
   }
 
   .character-fallback {
-    font-size: 3rem;
+    font-size: 2.4rem;
   }
 
   .header-ribbon {
@@ -418,9 +426,13 @@ body > *:not(#gif-bg) {
   }
 
   .divider-badge {
-    min-width: 4rem;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.8rem;
+    min-width: 3.3rem;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.7rem;
+  }
+
+  .divider-orbit {
+    font-size: 1rem;
   }
 
   .button-sticker {
