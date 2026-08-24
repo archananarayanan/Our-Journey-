@@ -13,13 +13,23 @@
     <!-- Header -->
     <header class="text-center py-6 sm:py-8 px-4">
       <h1 class="font-sofadi text-3xl sm:text-5xl font-extrabold tracking-tight text-shadow-lg" style="color:#1a1a2e; text-shadow: 0 2px 16px rgba(255,140,0,0.4), 0 1px 0 #fff;">
-        💕 Our Journey 💕
+        <span class="header-ribbon">
+          <span class="title-flair" aria-hidden="true">
+            <span class="clipart-chip">zip</span>
+            <span class="clipart-spark">✦</span>
+          </span>
+          <span>Our Journey</span>
+          <span class="title-flair" aria-hidden="true">
+            <span class="clipart-spark">✦</span>
+            <span class="clipart-chip">zoom</span>
+          </span>
+        </span>
       </h1>
       <p class="mt-2 text-sm sm:text-lg font-semibold" style="color:#3a3a6a;">Nick &amp; Judy — Earning love points together, one adventure at a time 🦊🐰</p>
     </header>
 
     <!-- Characters -->
-    <section class="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-8 px-4 pb-6">
+    <section class="journey-characters flex flex-row items-center justify-center gap-2 sm:gap-8 px-4 pb-6">
       <!-- Nick -->
       <div class="character-card nick-card flex flex-col items-center gap-3">
         <div class="character-img-wrap">
@@ -31,8 +41,12 @@
         <span class="font-bold text-lg sm:text-xl" style="color:#c84b00;">Nick Wilde</span>
         <span class="text-xs sm:text-sm opacity-70" style="color:#6a3a1a;">The Smooth Fox</span>
       </div>
-      <!-- Hearts -->
-      <div class="text-3xl sm:text-5xl animate-pulse select-none">❤️</div>
+      <!-- Divider -->
+      <div class="journey-divider select-none" aria-hidden="true">
+        <span class="divider-orbit">✦</span>
+        <span class="divider-badge">boing</span>
+        <span class="divider-orbit">✦</span>
+      </div>
       <!-- Judy -->
       <div class="character-card judy-card flex flex-col items-center gap-3">
         <div class="character-img-wrap">
@@ -93,17 +107,23 @@
         <div class="flex flex-col sm:flex-row gap-3">
           <button
             id="btn-add"
-            class="flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
-            style="background: linear-gradient(135deg, #ff8c00, #e05c00);"
+            class="comic-action-button comic-action-button-add flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-3"
           >
-            <span>💖</span> Add Love
+            <span class="button-sticker" aria-hidden="true">✨</span>
+            <span class="button-copy">
+              <strong>Pile It On</strong>
+              <small>Add Love</small>
+            </span>
           </button>
           <button
             id="btn-lose"
-            class="flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-2"
-            style="background: linear-gradient(135deg, #4a6fa5, #2d4a7a);"
+            class="comic-action-button comic-action-button-lose flex-1 py-2.5 sm:py-3 rounded-2xl font-bold text-base sm:text-lg text-white hover:opacity-90 active:scale-95 shadow-lg transition-all duration-150 flex items-center justify-center gap-3"
           >
-            <span>💔</span> Lose Love
+            <span class="button-sticker" aria-hidden="true">🪃</span>
+            <span class="button-copy">
+              <strong>Oops, Rewind</strong>
+              <small>Lose Love</small>
+            </span>
           </button>
         </div>
 
