@@ -300,7 +300,7 @@ function addMilestoneChip(milestone: number): void {
 
 // ─── Celebration ──────────────────────────────────────────────────────────────
 function closeCelebration(): void {
-  celebrationPopup.classList.add("hidden");
+  celebrationPopup.classList.remove("active");
   if (confettiAnimationFrameId !== null) {
     cancelAnimationFrame(confettiAnimationFrameId);
     confettiAnimationFrameId = null;
@@ -317,7 +317,7 @@ function celebrate(milestone: number): void {
   const msg =
     CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
   celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
-  celebrationPopup.classList.remove("hidden");
+  celebrationPopup.classList.add("active");
   if (celebrationHideTimer !== null) clearTimeout(celebrationHideTimer);
   celebrationHideTimer = setTimeout(() => closeCelebration(), 10_000);
 
