@@ -1,3 +1,5 @@
+import './style.css';
+
 // ─── Configuration ────────────────────────────────────────────────────────────
 const MAX_POINTS = 10_000;
 const MILESTONE_INTERVAL = 1_000;
