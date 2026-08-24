@@ -14,9 +14,9 @@ body {
 
 .page-bg {
   background: linear-gradient(135deg,
-    #ffd6a0,  /* soft orange */
-    #ffe8cc,  /* pale peach */
-    #fff9f2,  /* warm white */
+    #ffbf73,  /* richer orange */
+    #ffd9ad,  /* warmer peach */
+    #fff4e6,  /* orange-tinted warm white */
     #ffffff,  /* pure white */
     #f0f6ff,  /* cool white */
     #cce3ff,  /* powder blue */
@@ -24,9 +24,9 @@ body {
     #cce3ff,  /* powder blue */
     #f0f6ff,  /* cool white */
     #ffffff,  /* pure white */
-    #fff9f2,  /* warm white */
-    #ffe8cc,  /* pale peach */
-    #ffd6a0   /* soft orange (loops) */
+    #fff4e6,  /* orange-tinted warm white */
+    #ffd9ad,  /* warmer peach */
+    #ffbf73   /* richer orange (loops) */
   );
   background-size: 400% 400%;
   animation: bg-shift 18s ease-in-out infinite;
@@ -157,8 +157,8 @@ body {
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 75vw;
-  height: 75vh;
+  width: 80vw;
+  height: 80vh;
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;

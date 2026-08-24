@@ -90,6 +90,9 @@ function exportJourney(): void {
 let journeyLog: JourneyEntry[] = [];
 let currentPoints = 0;
 let lastCelebratedMilestone = 0;
+let celebrationHideTimer: ReturnType<typeof setTimeout> | null = null;
+let confettiAnimationFrameId: number | null = null;
+let confettiRunId = 0;
 
 async function initState(): Promise<void> {
   try {
@@ -277,11 +280,23 @@ function checkMilestones(): void {
   const reachedMilestone =
     Math.floor(currentPoints / MILESTONE_INTERVAL) * MILESTONE_INTERVAL;
 
-  if (reachedMilestone > 0 && reachedMilestone > lastCelebratedMilestone) {
-    lastCelebratedMilestone = reachedMilestone;
-    celebrate(reachedMilestone);
-    addMilestoneChip(reachedMilestone);
+  if (reachedMilestone <= 0 || reachedMilestone <= lastCelebratedMilestone) return;
+
+  const milestonesToCelebrate: number[] = [];
+  for (
+    let milestone = lastCelebratedMilestone + MILESTONE_INTERVAL;
+    milestone <= reachedMilestone;
+    milestone += MILESTONE_INTERVAL
+  ) {
+    milestonesToCelebrate.push(milestone);
+    addMilestoneChip(milestone);
   }
+
+  lastCelebratedMilestone = reachedMilestone;
+
+  milestonesToCelebrate.forEach((milestone, index) => {
+    setTimeout(() => celebrate(milestone), index * 900);
+  });
 }
 
 function addMilestoneChip(milestone: number): void {
@@ -300,7 +315,11 @@ function celebrate(milestone: number): void {
     CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
   celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
   celebrationMessage.classList.remove("hidden");
-  setTimeout(() => celebrationMessage.classList.add("hidden"), 6_000);
+  if (celebrationHideTimer !== null) clearTimeout(celebrationHideTimer);
+  celebrationHideTimer = setTimeout(() => {
+    celebrationMessage.classList.add("hidden");
+    celebrationHideTimer = null;
+  }, 6_000);
 
   // Restart gif background cycling for visual freshness
   startGifBackground();
@@ -322,6 +341,8 @@ function launchConfetti(): void {
   const ctx = confettiCanvas.getContext("2d")!;
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
+  if (confettiAnimationFrameId !== null) cancelAnimationFrame(confettiAnimationFrameId);
+  const runId = ++confettiRunId;
 
   const colors = ["#ff8c00", "#4a90d9", "#ffffff", "#fbbf24", "#e05c00", "#6db3f2"];
   const particles: Particle[] = Array.from({ length: 150 }, () => ({
@@ -338,6 +359,8 @@ function launchConfetti(): void {
   const maxFrames = 180;
 
   function draw(): void {
+    if (runId !== confettiRunId) return;
+
     ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     particles.forEach((p) => {
       p.x += p.vx;
@@ -353,13 +376,14 @@ function launchConfetti(): void {
     ctx.globalAlpha = 1;
     frame++;
     if (frame < maxFrames) {
-      requestAnimationFrame(draw);
+      confettiAnimationFrameId = requestAnimationFrame(draw);
     } else {
       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
       confettiCanvas.classList.add("hidden");
+      confettiAnimationFrameId = null;
     }
   }
-  requestAnimationFrame(draw);
+  confettiAnimationFrameId = requestAnimationFrame(draw);
 }
 
 // ─── Action log ───────────────────────────────────────────────────────────────
@@ -378,7 +402,6 @@ function logAction(text: string, positive: boolean, pts: number): void {
     points: pts,
     totalAfter: currentPoints,
   });
-  saveState();
 }
 
 // ─── Button handlers ──────────────────────────────────────────────────────────
@@ -401,6 +424,7 @@ btnAdd.addEventListener("click", () => {
   animateUpdaterPanel("add");
   updateDisplay();
   checkMilestones();
+  saveState();
 });
 
 btnLose.addEventListener("click", () => {
@@ -411,6 +435,7 @@ btnLose.addEventListener("click", () => {
   pointsInput.value = "";
   animateUpdaterPanel("lose");
   updateDisplay();
+  saveState();
 });
 
 pointsInput.addEventListener("keydown", (e) => {
