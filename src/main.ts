@@ -125,33 +125,60 @@ const actionLog = document.getElementById("action-log") as HTMLUListElement;
 const celebrationMessage = document.getElementById("celebration-message") as HTMLElement;
 const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement;
 const scoreUpdaterInner = document.querySelector(".score-updater-inner") as HTMLElement;
-const gifStrip = document.getElementById("gif-strip") as HTMLElement;
+const gifBg = document.getElementById("gif-bg") as HTMLElement;
 
-// ─── GIF strip ────────────────────────────────────────────────────────────────
-/**
- * Render a random selection of GIFs in the gif strip at the bottom.
- * Average gif is ~500px wide; we fill the full viewport width.
- */
-function renderGifStrip(): void {
-  const count = Math.max(3, Math.ceil(window.innerWidth / 480));
+// ─── GIF background cycling ───────────────────────────────────────────────────
+let gifBgTimer: ReturnType<typeof setTimeout> | null = null;
+let gifBgIndex = 0;
+const GIF_DISPLAY_DURATION = 4_000; // ms each gif stays visible
+
+function preloadGifImage(src: string): HTMLImageElement {
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "";
+  return img;
+}
+
+/** Show gifs one-at-a-time cycling as translucent background */
+function startGifBackground(): void {
+  if (gifBgTimer !== null) clearTimeout(gifBgTimer);
+  gifBg.innerHTML = "";
+
   const shuffled = [...CELEBRATION_GIFS].sort(() => Math.random() - 0.5);
-  gifStrip.innerHTML = "";
-  for (let i = 0; i < count; i++) {
-    const src = shuffled[i % shuffled.length];
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = "Celebration";
-    img.className = "gif-item";
-    img.loading = "lazy";
-    gifStrip.appendChild(img);
+  gifBgIndex = 0;
+
+  const img = preloadGifImage(shuffled[gifBgIndex]);
+  gifBg.appendChild(img);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => img.classList.add("gif-visible"));
+  });
+
+  function cycleNext(): void {
+    const currentImg = gifBg.querySelector("img");
+    gifBgIndex = (gifBgIndex + 1) % shuffled.length;
+    const nextImg = preloadGifImage(shuffled[gifBgIndex]);
+    gifBg.appendChild(nextImg);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        nextImg.classList.add("gif-visible");
+        if (currentImg) currentImg.classList.remove("gif-visible");
+        setTimeout(() => currentImg?.remove(), 900);
+      });
+    });
+
+    gifBgTimer = setTimeout(cycleNext, GIF_DISPLAY_DURATION);
   }
+
+  gifBgTimer = setTimeout(cycleNext, GIF_DISPLAY_DURATION);
 }
 
 // ─── Init UI ──────────────────────────────────────────────────────────────────
 function init(): void {
   maxLabel.textContent = MAX_POINTS.toLocaleString();
   buildMilestoneMarkers();
-  renderGifStrip();
+  startGifBackground();
 }
 
 function buildMilestoneMarkers(): void {
@@ -252,8 +279,8 @@ function celebrate(milestone: number): void {
   celebrationMessage.classList.remove("hidden");
   setTimeout(() => celebrationMessage.classList.add("hidden"), 6_000);
 
-  // Re-randomise gif strip for visual freshness
-  renderGifStrip();
+  // Restart gif background cycling for visual freshness
+  startGifBackground();
 
   launchConfetti();
 }

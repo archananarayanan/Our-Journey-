@@ -141,30 +141,38 @@ body {
   opacity: 0.6;
 }
 
-/* ─── GIF strip at bottom ────────────────────────────────────────────────── */
-.gif-strip-section {
-  width: 100%;
-  min-height: 320px;
+/* ─── GIF background layer ───────────────────────────────────────────────── */
+#gif-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  gap: 0;
-  padding: 0;
-  margin-top: 2rem;
+}
+
+#gif-bg img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  border: none;
   background: transparent;
 }
 
-.gif-strip-section .gif-item {
-  flex: 1;
-  min-width: 0;
-  height: 320px;
-  object-fit: cover;
-  object-position: center bottom;
-  display: block;
-  /* allow natural gif playback, no border */
-  border: none;
-  outline: none;
-  background: transparent;
+#gif-bg img.gif-visible {
+  opacity: 0.35;
+}
+
+/* Ensure page content sits above the gif background */
+body > *:not(#gif-bg) {
+  position: relative;
+  z-index: 1;
 }
 
 /* ─── Custom scrollbar for action log ───────────────────────────────────── */
