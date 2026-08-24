@@ -1,5 +1,5 @@
 import './style.css';
-import { getCurrentScoreData, updateJourney, type JourneyData } from './json_backend_service';
+import { getCurrentScoreData, updateJourney, type JourneyData, type JourneyEntry } from './json_backend_service';
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 const MAX_POINTS = 10_000;
