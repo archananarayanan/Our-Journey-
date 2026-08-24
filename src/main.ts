@@ -4,14 +4,18 @@ import './style.css';
 const MAX_POINTS = 10_000;
 const MILESTONE_INTERVAL = 1_000;
 
-/** Static in-memory celebration videos stored in /public/videos/ */
+/** Celebration GIFs stored in /public/videos/ */
 const BASE = import.meta.env.BASE_URL;
-const CELEBRATION_VIDEOS: string[] = [
-  `${BASE}videos/celebration1.mp4`,
-  `${BASE}videos/celebration2.mp4`,
-  `${BASE}videos/celebration3.mp4`,
-  `${BASE}videos/celebration4.mp4`,
-  `${BASE}videos/celebration5.mp4`,
+const CELEBRATION_GIFS: string[] = [
+  `${BASE}videos/celebration1.gif`,
+  `${BASE}videos/celebration2.gif`,
+  `${BASE}videos/celebration3.gif`,
+  `${BASE}videos/celebration4.gif`,
+  `${BASE}videos/celebration5.gif`,
+  `${BASE}videos/celebration6.gif`,
+  `${BASE}videos/celebration7.gif`,
+  `${BASE}videos/celebration8.gif`,
+  `${BASE}videos/celebration9.gif`,
 ];
 
 const CELEBRATION_MESSAGES: string[] = [
@@ -85,9 +89,7 @@ let currentPoints = 0;
 let lastCelebratedMilestone = 0;
 
 async function initState(): Promise<void> {
-  // 1. Try localStorage first (most recent session)
   const local = loadState();
-  // 2. If localStorage is empty, seed from the repo's journey.json
   if (local.totalScore === 0 && local.log.length === 0) {
     try {
       const res = await fetch(DATA_PATH);
@@ -120,18 +122,36 @@ const pointsInput = document.getElementById("points-input") as HTMLInputElement;
 const btnAdd = document.getElementById("btn-add") as HTMLButtonElement;
 const btnLose = document.getElementById("btn-lose") as HTMLButtonElement;
 const actionLog = document.getElementById("action-log") as HTMLUListElement;
-const celebrationPanel = document.getElementById("celebration-panel") as HTMLElement;
 const celebrationMessage = document.getElementById("celebration-message") as HTMLElement;
-const videoWrapper = document.getElementById("video-wrapper") as HTMLElement;
-const celebrationVideo = document.getElementById("celebration-video") as HTMLVideoElement;
-const celebrationVideoSrc = document.getElementById("celebration-video-src") as HTMLSourceElement;
-const celebrationVideoSrcMp4 = document.getElementById("celebration-video-src-mp4") as HTMLSourceElement;
 const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement;
+const scoreUpdaterInner = document.querySelector(".score-updater-inner") as HTMLElement;
+const gifStrip = document.getElementById("gif-strip") as HTMLElement;
+
+// ─── GIF strip ────────────────────────────────────────────────────────────────
+/**
+ * Render a random selection of GIFs in the gif strip at the bottom.
+ * Average gif is ~500px wide; we fill the full viewport width.
+ */
+function renderGifStrip(): void {
+  const count = Math.max(3, Math.ceil(window.innerWidth / 480));
+  const shuffled = [...CELEBRATION_GIFS].sort(() => Math.random() - 0.5);
+  gifStrip.innerHTML = "";
+  for (let i = 0; i < count; i++) {
+    const src = shuffled[i % shuffled.length];
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = "Celebration";
+    img.className = "gif-item";
+    img.loading = "lazy";
+    gifStrip.appendChild(img);
+  }
+}
 
 // ─── Init UI ──────────────────────────────────────────────────────────────────
 function init(): void {
   maxLabel.textContent = MAX_POINTS.toLocaleString();
   buildMilestoneMarkers();
+  renderGifStrip();
 }
 
 function buildMilestoneMarkers(): void {
@@ -142,20 +162,18 @@ function buildMilestoneMarkers(): void {
   for (let i = 1; i <= totalMilestones; i++) {
     const pct = (i / totalMilestones) * 100;
 
-    // Tick label row above the bar
     const tick = document.createElement("div");
-    tick.className = "text-xs text-purple-300 opacity-60 select-none";
+    tick.className = "text-xs opacity-60 select-none";
     tick.textContent = `${(i * MILESTONE_INTERVAL).toLocaleString()}`;
     tick.style.width = `${100 / totalMilestones}%`;
     tick.style.textAlign = "center";
     milestoneTicks.appendChild(tick);
 
-    // Vertical line marker on the bar
     const marker = document.createElement("div");
     marker.id = `milestone-marker-${i}`;
-    marker.className =
-      "absolute top-0 bottom-0 w-0.5 bg-white/30 transition-colors duration-500";
+    marker.className = "absolute top-0 bottom-0 w-0.5 transition-colors duration-500";
     marker.style.left = `${pct}%`;
+    marker.style.background = "rgba(255,255,255,0.4)";
     marker.setAttribute("aria-label", `Milestone ${i * MILESTONE_INTERVAL}`);
     milestoneMarkers.appendChild(marker);
   }
@@ -165,11 +183,9 @@ function buildMilestoneMarkers(): void {
 function updateDisplay(): void {
   scoreDisplay.textContent = currentPoints.toLocaleString();
 
-  // Progress fill
   const pct = Math.min((currentPoints / MAX_POINTS) * 100, 100);
   progressFill.style.width = `${pct}%`;
 
-  // Next milestone label
   const nextMilestone =
     Math.ceil((currentPoints + 1) / MILESTONE_INTERVAL) * MILESTONE_INTERVAL;
   if (currentPoints >= MAX_POINTS) {
@@ -179,24 +195,31 @@ function updateDisplay(): void {
     milestoneLabel.textContent = `Next milestone: ${nextMilestone.toLocaleString()} pts (${remaining.toLocaleString()} to go)`;
   }
 
-  // Score bump animation
   scoreDisplay.classList.remove("score-bump");
-  void scoreDisplay.offsetWidth; // reflow to restart animation
+  void scoreDisplay.offsetWidth;
   scoreDisplay.classList.add("score-bump");
 
-  // Update milestone markers colour
   const totalMilestones = MAX_POINTS / MILESTONE_INTERVAL;
   for (let i = 1; i <= totalMilestones; i++) {
     const marker = document.getElementById(`milestone-marker-${i}`);
     if (!marker) continue;
     if (currentPoints >= i * MILESTONE_INTERVAL) {
-      marker.classList.replace("bg-white/30", "bg-yellow-400");
+      marker.style.background = "#ff8c00";
     } else {
-      if (marker.classList.contains("bg-yellow-400")) {
-        marker.classList.replace("bg-yellow-400", "bg-white/30");
-      }
+      marker.style.background = "rgba(255,255,255,0.4)";
     }
   }
+}
+
+// ─── Score updater panel animation ───────────────────────────────────────────
+function animateUpdaterPanel(type: "add" | "lose"): void {
+  if (!scoreUpdaterInner) return;
+  scoreUpdaterInner.classList.remove("anim-add", "anim-lose");
+  void scoreUpdaterInner.offsetWidth;
+  scoreUpdaterInner.classList.add(type === "add" ? "anim-add" : "anim-lose");
+  setTimeout(() => {
+    scoreUpdaterInner.classList.remove("anim-add", "anim-lose");
+  }, 1_300);
 }
 
 // ─── Milestone reached ────────────────────────────────────────────────────────
@@ -213,37 +236,25 @@ function checkMilestones(): void {
 
 function addMilestoneChip(milestone: number): void {
   const chip = document.createElement("span");
-  chip.className =
-    "px-3 py-1 rounded-full text-xs font-bold bg-yellow-400/20 border border-yellow-400/50 text-yellow-300";
+  chip.className = "px-3 py-1 rounded-full text-xs font-bold";
+  chip.style.background = "rgba(255,140,0,0.15)";
+  chip.style.border = "1px solid rgba(255,140,0,0.45)";
+  chip.style.color = "#c84b00";
   chip.textContent = `🏅 ${milestone.toLocaleString()} pts`;
   milestoneChips.appendChild(chip);
 }
 
 // ─── Celebration ──────────────────────────────────────────────────────────────
 function celebrate(milestone: number): void {
-  // Pick random message
   const msg =
     CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
   celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
+  celebrationMessage.classList.remove("hidden");
+  setTimeout(() => celebrationMessage.classList.add("hidden"), 6_000);
 
-  // Pick random video
-  const videoSrc =
-    CELEBRATION_VIDEOS[Math.floor(Math.random() * 100) % CELEBRATION_VIDEOS.length];
-  celebrationVideoSrc.src = videoSrc;
-  celebrationVideoSrcMp4.src = videoSrc;
-  celebrationVideo.load();
-  celebrationVideo.play().catch(() => {
-    // Autoplay may be blocked by browser — user can hit play
-  });
+  // Re-randomise gif strip for visual freshness
+  renderGifStrip();
 
-  // Show video
-  videoWrapper.classList.remove("hidden");
-
-  // Glow effect on panel
-  celebrationPanel.classList.add("celebration-active");
-  setTimeout(() => celebrationPanel.classList.remove("celebration-active"), 5_000);
-
-  // Confetti
   launchConfetti();
 }
 
@@ -262,7 +273,7 @@ function launchConfetti(): void {
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
 
-  const colors = ["#f472b6", "#a78bfa", "#60a5fa", "#fbbf24", "#34d399", "#f87171"];
+  const colors = ["#ff8c00", "#4a90d9", "#ffffff", "#fbbf24", "#e05c00", "#6db3f2"];
   const particles: Particle[] = Array.from({ length: 150 }, () => ({
     x: Math.random() * confettiCanvas.width,
     y: Math.random() * confettiCanvas.height * 0.5,
@@ -303,17 +314,14 @@ function launchConfetti(): void {
 
 // ─── Action log ───────────────────────────────────────────────────────────────
 function logAction(text: string, positive: boolean, pts: number): void {
-  // DOM log
   const li = document.createElement("li");
-  li.className = `flex items-center gap-1 ${positive ? "text-green-300" : "text-red-300"}`;
+  li.className = `flex items-center gap-1 ${positive ? "text-orange-700" : "text-blue-700"}`;
   li.innerHTML = `<span>${positive ? "➕" : "➖"}</span><span>${text}</span>`;
   actionLog.prepend(li);
-  // Keep only last 20 DOM entries
   while (actionLog.children.length > 20) {
     actionLog.removeChild(actionLog.lastChild!);
   }
 
-  // Persistent log entry
   journeyLog.push({
     timestamp: new Date().toISOString(),
     action: positive ? "add" : "lose",
@@ -340,6 +348,7 @@ btnAdd.addEventListener("click", () => {
   currentPoints = Math.min(currentPoints + pts, MAX_POINTS);
   logAction(`+${pts.toLocaleString()} pts added`, true, pts);
   pointsInput.value = "";
+  animateUpdaterPanel("add");
   updateDisplay();
   checkMilestones();
 });
@@ -350,6 +359,7 @@ btnLose.addEventListener("click", () => {
   currentPoints = Math.max(currentPoints - pts, 0);
   logAction(`-${pts.toLocaleString()} pts lost`, false, pts);
   pointsInput.value = "";
+  animateUpdaterPanel("lose");
   updateDisplay();
 });
 
@@ -367,19 +377,17 @@ if (btnExport) btnExport.addEventListener("click", exportJourney);
   init();
   updateDisplay();
 
-  // Replay log entries into DOM (latest 20)
   const recent = journeyLog.slice(-20).reverse();
   for (const entry of recent) {
     const positive = entry.action === "add";
     const li = document.createElement("li");
-    li.className = `flex items-center gap-1 ${positive ? "text-green-300" : "text-red-300"}`;
+    li.className = `flex items-center gap-1 ${positive ? "text-orange-700" : "text-blue-700"}`;
     const sign = positive ? "➕" : "➖";
     const pts = entry.points.toLocaleString();
     li.innerHTML = `<span>${sign}</span><span>${positive ? "+" : "-"}${pts} pts — ${entry.timestamp.slice(0, 10)}</span>`;
     actionLog.appendChild(li);
   }
 
-  // Restore milestone chips
   const totalMilestones = MAX_POINTS / MILESTONE_INTERVAL;
   for (let i = 1; i <= totalMilestones; i++) {
     if (currentPoints >= i * MILESTONE_INTERVAL) {
