@@ -8,7 +8,6 @@ A (almost) static TypeScript + Tailwind CSS dashboard where **Nick Wilde 🦊** 
 - **Progress Bar** – fills from 0 → 10,000 with a milestone marker every 1,000 pts
 - **Milestone Celebrations** – on every 1,000-point milestone, a random celebration video plays with confetti
 - **Action Log** – tracks recent point changes
-- **Celebration Zone** – embedded video panel with a randomly chosen `.mp4` clip
 
 ## Quick Start
 
@@ -39,3 +38,6 @@ const MILESTONE_INTERVAL = 1_000;   // change the milestone spacing
 npm run build   # outputs to dist/
 npm run preview # serve the build locally
 ```
+
+## Data Store 
+Currently, the data is hosted in tmp JSON backend provided by "https://app.jsonstorage.net/" 
