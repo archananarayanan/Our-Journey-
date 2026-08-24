@@ -149,7 +149,9 @@ const pointsInput = document.getElementById("points-input") as HTMLInputElement;
 const btnAdd = document.getElementById("btn-add") as HTMLButtonElement;
 const btnLose = document.getElementById("btn-lose") as HTMLButtonElement;
 const actionLog = document.getElementById("action-log") as HTMLUListElement;
+const celebrationPopup = document.getElementById("celebration-popup") as HTMLElement;
 const celebrationMessage = document.getElementById("celebration-message") as HTMLElement;
+const celebrationClose = document.getElementById("celebration-close") as HTMLButtonElement;
 const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement;
 const scoreUpdaterInner = document.querySelector(".score-updater-inner") as HTMLElement;
 const gifBg = document.getElementById("gif-bg") as HTMLElement;
@@ -315,12 +317,12 @@ function celebrate(milestone: number): void {
   const msg =
     CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
   celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
-  celebrationMessage.classList.remove("hidden");
+  celebrationPopup.classList.remove("hidden");
   if (celebrationHideTimer !== null) clearTimeout(celebrationHideTimer);
   celebrationHideTimer = setTimeout(() => {
-    celebrationMessage.classList.add("hidden");
+    celebrationPopup.classList.add("hidden");
     celebrationHideTimer = null;
-  }, 6_000);
+  }, 10_000);
 
   // Restart gif background cycling for visual freshness
   startGifBackground();
@@ -460,6 +462,15 @@ pointsInput.addEventListener("keydown", (e) => {
 // ─── Export button ────────────────────────────────────────────────────────────
 const btnExport = document.getElementById("btn-export");
 if (btnExport) btnExport.addEventListener("click", exportJourney);
+
+// ─── Celebration close button ─────────────────────────────────────────────────
+celebrationClose.addEventListener("click", () => {
+  celebrationPopup.classList.add("hidden");
+  if (celebrationHideTimer !== null) {
+    clearTimeout(celebrationHideTimer);
+    celebrationHideTimer = null;
+  }
+});
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 (async () => {

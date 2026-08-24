@@ -123,8 +123,6 @@
           <ul id="action-log" class="text-sm space-y-1 max-h-32 overflow-y-auto pr-1" style="color:#1a1a2e;"></ul>
         </div>
 
-        <!-- Celebration message (shown at milestones) -->
-        <p id="celebration-message" class="text-base text-center font-semibold hidden" style="color:#c84b00;"></p>
       </div>
     </section>
 
@@ -133,6 +131,14 @@
 
     <!-- Confetti canvas -->
     <canvas id="confetti-canvas" class="pointer-events-none fixed inset-0 w-full h-full z-50 hidden"></canvas>
+
+    <!-- Milestone celebration popup -->
+    <div id="celebration-popup" class="hidden fixed inset-0 flex items-center justify-center z-[60] pointer-events-none">
+      <div class="celebration-popup-card pointer-events-auto">
+        <button id="celebration-close" aria-label="Close celebration">&times;</button>
+        <p id="celebration-message"></p>
+      </div>
+    </div>
 
     <!-- Celebration GIF strip removed; GIFs render as background via #gif-bg -->
 
