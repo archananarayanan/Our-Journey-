@@ -8,6 +8,7 @@ export interface JourneyEntry {
 export interface JourneyData {
   totalScore: number;
   lastCelebratedMilestone: number;
+  next_target: number;
   log: JourneyEntry[];
 }
 
