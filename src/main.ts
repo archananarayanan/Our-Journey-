@@ -130,7 +130,7 @@ const gifBg = document.getElementById("gif-bg") as HTMLElement;
 // ─── GIF background cycling ───────────────────────────────────────────────────
 let gifBgTimer: ReturnType<typeof setTimeout> | null = null;
 let gifBgIndex = 0;
-const GIF_DISPLAY_DURATION = 4_000; // ms each gif stays visible
+const GIF_DISPLAY_DURATION = 120_000; // ms each gif stays visible
 
 function preloadGifImage(src: string): HTMLImageElement {
   const img = document.createElement("img");
