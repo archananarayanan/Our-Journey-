@@ -107,16 +107,6 @@
           </button>
         </div>
 
-        <!-- Export / Save -->
-        <button
-          id="btn-export"
-          class="w-full py-2 rounded-2xl font-semibold text-sm border active:scale-95 transition-all duration-150 flex items-center justify-center gap-2"
-          style="background:rgba(255,255,255,0.4); border-color:rgba(255,255,255,0.5); color:#3a52a0;"
-          title="Download journey.json to save progress to the repo"
-        >
-          <span>💾</span> Save Journey (download journey.json)
-        </button>
-
         <!-- Recent action log -->
         <div class="flex flex-col gap-1 mt-2">
           <span class="text-xs font-semibold uppercase tracking-wider" style="color:#3a52a0;">Recent Actions</span>
@@ -128,11 +118,6 @@
 
     <!-- GIF background layer (cycles one gif at a time, translucent) -->
     <div id="gif-bg" aria-hidden="true"></div>
-
-    <!-- Confetti canvas -->
-    <canvas id="confetti-canvas" class="pointer-events-none fixed inset-0 w-full h-full z-[60]"></canvas>
-
-    <!-- Celebration GIF strip removed; GIFs render as background via #gif-bg -->
 
     <script type="module" src="/src/main.ts"></script>
   </body>
