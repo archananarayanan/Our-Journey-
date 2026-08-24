@@ -32,6 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          VITE_JSON_STORAGE_API_KEY: ${{ vars.VITE_JSON_STORAGE_API_KEY || secrets.VITE_JSON_STORAGE_API_KEY }}
         run: npm run build
 
       - name: Upload Pages artifact
