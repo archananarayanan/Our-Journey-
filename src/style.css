@@ -52,6 +52,10 @@ body {
   font-family: 'Sofadi One', 'Baloo 2', system-ui, sans-serif;
 }
 
+.font-mouse-memoirs {
+  font-family: 'Mouse Memoirs', 'Baloo 2', system-ui, sans-serif;
+}
+
 /* ─── Page background: animated orange → white → blue cycle ─────────────── */
 @keyframes bg-shift {
   0%   { background-position: 0% 50%; }
