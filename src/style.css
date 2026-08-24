@@ -23,22 +23,30 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 3.4rem;
-  padding: 0.15rem 0.6rem;
+  min-width: 2.9rem;
+  min-height: 2.1rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.72);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 239, 214, 0.78)),
+    rgba(255, 255, 255, 0.72);
+  background-blend-mode: overlay, normal;
   border: 2px solid rgba(26, 26, 46, 0.18);
   box-shadow: 0 4px 12px rgba(255, 140, 0, 0.18);
-  color: #c84b00;
-  font-size: 0.42em;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   transform: rotate(-8deg);
 }
 
 .title-flair:last-child .clipart-chip {
   transform: rotate(8deg);
+}
+
+.clipart-icon {
+  display: block;
+  width: 1.7rem;
+  height: 1.7rem;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  filter: saturate(1.06) contrast(1.04);
 }
 
 .clipart-spark {
@@ -50,6 +58,10 @@ body {
 
 .font-sofadi {
   font-family: 'Sofadi One', 'Baloo 2', system-ui, sans-serif;
+}
+
+.font-mouse-memoirs {
+  font-family: 'Mouse Memoirs', 'Baloo 2', system-ui, sans-serif;
 }
 
 /* ─── Page background: animated orange → white → blue cycle ─────────────── */
@@ -417,8 +429,14 @@ body > *:not(#gif-bg) {
   }
 
   .clipart-chip {
-    min-width: 2.8rem;
-    padding-inline: 0.45rem;
+    min-width: 2.5rem;
+    min-height: 1.9rem;
+    padding-inline: 0.35rem;
+  }
+
+  .clipart-icon {
+    width: 1.45rem;
+    height: 1.45rem;
   }
 
   .journey-divider {
