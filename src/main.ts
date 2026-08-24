@@ -62,18 +62,6 @@ function saveState(): void {
     .catch(() => undefined);
 }
 
-/** Trigger a download of the current journey.json so users can commit it back. */
-function exportJourney(): void {
-  const data = buildJourneyData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "journey.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 // ─── State ────────────────────────────────────────────────────────────────────
 let journeyLog: JourneyEntry[] = [];
 let currentPoints = 0;
@@ -416,10 +404,6 @@ btnLose.addEventListener("click", () => {
 pointsInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") btnAdd.click();
 });
-
-// ─── Export button ────────────────────────────────────────────────────────────
-const btnExport = document.getElementById("btn-export");
-if (btnExport) btnExport.addEventListener("click", exportJourney);
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 (async () => {
