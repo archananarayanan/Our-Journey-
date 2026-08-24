@@ -59,20 +59,36 @@ export async function getCurrentScoreData(): Promise<JourneyData | null> {
 
 export async function updateJourney(data: JourneyData): Promise<boolean> {
   const url = getJourneyUrl();
-  if (!url) return false;
-
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to update journey data: ${res.status}`);
+  if (!url) {
+    console.warn("[journey-sync] Skipping JSON backend upload: missing VITE_JSON_STORAGE_API_KEY.");
+    return false;
   }
 
-  return true;
+  try {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const responseText = await res.text().catch(() => "");
+      throw new Error(
+        `Failed to update journey data: ${res.status}${responseText ? ` ${responseText}` : ""}`,
+      );
+    }
+
+    console.info("[journey-sync] Successfully uploaded journey data to JSON backend.", {
+      totalScore: data.totalScore,
+      lastCelebratedMilestone: data.lastCelebratedMilestone,
+      logEntries: data.log.length,
+    });
+    return true;
+  } catch (error) {
+    console.error("[journey-sync] Failed to upload journey data to JSON backend.", error);
+    throw error;
+  }
 }
