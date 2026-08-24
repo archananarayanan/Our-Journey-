@@ -19,19 +19,6 @@ const CELEBRATION_GIFS: string[] = [
   `${BASE}videos/celebration9.gif`,
 ];
 
-const CELEBRATION_MESSAGES: string[] = [
-  "🦊 Nick: 'Finally, our hard work paid off!' 🎉",
-  "🐰 Judy: 'We did it together, Nick! Anyone can do anything!' 🌟",
-  "🦊🐰 Nick & Judy high-five! Another 1,000 points in the bag! 💪",
-  "🐰 Judy: 'Try everything — and we just did!' 🎶",
-  "🦊 Nick: 'Pretty sly, Carrots. Pretty sly.' 😏❤️",
-  "🦊🐰 Zootopia cheers for Nick & Judy! 🏙️🎊",
-  "🐰 Judy: 'I knew you believed in us all along, Nick!' 💕",
-  "🦊 Nick: 'I may have been wrong about giving up.' 🙌",
-  "🦊🐰 Another milestone smashed — onward to 10,000! 🚀",
-  "🎉 The whole of Zootopia is celebrating with you two! 🦁🐘🦒",
-];
-
 // ─── Persistent storage ───────────────────────────────────────────────────────
 const STORAGE_KEY = "ourJourney";
 const DATA_PATH = `${BASE}data/journey.json`;
@@ -43,13 +30,14 @@ function loadState(): JourneyData {
   } catch {
     // fallback to defaults below
   }
-  return { totalScore: 0, lastCelebratedMilestone: 0, log: [] };
+  return { totalScore: 0, lastCelebratedMilestone: 0, next_target: 1000, log: [] };
 }
 
 function buildJourneyData(): JourneyData {
   return {
     totalScore: currentPoints,
     lastCelebratedMilestone,
+    next_target: nextTarget,
     log: journeyLog,
   };
 }
@@ -90,7 +78,7 @@ function exportJourney(): void {
 let journeyLog: JourneyEntry[] = [];
 let currentPoints = 0;
 let lastCelebratedMilestone = 0;
-let celebrationHideTimer: ReturnType<typeof setTimeout> | null = null;
+let nextTarget = 1000;
 let confettiAnimationFrameId: number | null = null;
 let confettiRunId = 0;
 let updaterConfettiTimer: ReturnType<typeof setTimeout> | null = null;
@@ -101,6 +89,7 @@ async function initState(): Promise<void> {
     if (remote) {
       currentPoints = remote.totalScore ?? 0;
       lastCelebratedMilestone = remote.lastCelebratedMilestone ?? 0;
+      nextTarget = remote.next_target ?? 1000;
       journeyLog = remote.log ?? [];
       saveLocalState(buildJourneyData());
       return;
@@ -113,6 +102,7 @@ async function initState(): Promise<void> {
   if (local.totalScore !== 0 || local.log.length > 0) {
     currentPoints = local.totalScore;
     lastCelebratedMilestone = local.lastCelebratedMilestone;
+    nextTarget = local.next_target ?? 1000;
     journeyLog = local.log;
     return;
   }
@@ -123,6 +113,7 @@ async function initState(): Promise<void> {
       const seed = (await res.json()) as JourneyData;
       currentPoints = seed.totalScore ?? 0;
       lastCelebratedMilestone = seed.lastCelebratedMilestone ?? 0;
+      nextTarget = seed.next_target ?? 1000;
       journeyLog = seed.log ?? [];
       saveLocalState(buildJourneyData());
       return;
@@ -133,6 +124,7 @@ async function initState(): Promise<void> {
 
   currentPoints = 0;
   lastCelebratedMilestone = 0;
+  nextTarget = 1000;
   journeyLog = [];
 }
 
@@ -149,17 +141,14 @@ const pointsInput = document.getElementById("points-input") as HTMLInputElement;
 const btnAdd = document.getElementById("btn-add") as HTMLButtonElement;
 const btnLose = document.getElementById("btn-lose") as HTMLButtonElement;
 const actionLog = document.getElementById("action-log") as HTMLUListElement;
-const celebrationPopup = document.getElementById("celebration-popup") as HTMLElement;
-const celebrationMessage = document.getElementById("celebration-message") as HTMLElement;
-const celebrationClose = document.getElementById("celebration-close") as HTMLButtonElement;
 const confettiCanvas = document.getElementById("confetti-canvas") as HTMLCanvasElement;
 const scoreUpdaterInner = document.querySelector(".score-updater-inner") as HTMLElement;
-const gifBg = document.getElementById("gif-bg") as HTMLElement;
 
 // ─── GIF background cycling ───────────────────────────────────────────────────
 let gifBgTimer: ReturnType<typeof setTimeout> | null = null;
 let gifBgIndex = 0;
 const GIF_DISPLAY_DURATION = 120_000; // ms each gif stays visible
+const gifBg = document.getElementById("gif-bg") as HTMLElement;
 
 function preloadGifImage(src: string): HTMLImageElement {
   const img = document.createElement("img");
@@ -280,12 +269,15 @@ function animateUpdaterPanel(type: "add" | "lose"): void {
 
 // ─── Milestone reached ────────────────────────────────────────────────────────
 function checkMilestoneOnInput(): void {
-  if (currentPoints === 0 || currentPoints % MILESTONE_INTERVAL !== 0) return;
-  if (currentPoints <= lastCelebratedMilestone) return;
-
-  addMilestoneChip(currentPoints);
-  lastCelebratedMilestone = currentPoints;
-  celebrate(currentPoints);
+  while (currentPoints > nextTarget) {
+    addMilestoneChip(nextTarget);
+    lastCelebratedMilestone = nextTarget;
+    launchUpdaterConfetti();
+    launchConfetti();
+    startGifBackground();
+    nextTarget += 1000;
+    saveState();
+  }
 }
 
 function addMilestoneChip(milestone: number): void {
@@ -298,36 +290,7 @@ function addMilestoneChip(milestone: number): void {
   milestoneChips.appendChild(chip);
 }
 
-// ─── Celebration ──────────────────────────────────────────────────────────────
-function closeCelebration(): void {
-  celebrationPopup.classList.remove("active");
-  if (confettiAnimationFrameId !== null) {
-    cancelAnimationFrame(confettiAnimationFrameId);
-    confettiAnimationFrameId = null;
-  }
-  const ctx = confettiCanvas.getContext("2d");
-  if (ctx) ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-  if (celebrationHideTimer !== null) {
-    clearTimeout(celebrationHideTimer);
-    celebrationHideTimer = null;
-  }
-}
-
-function celebrate(milestone: number): void {
-  const msg =
-    CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
-  celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
-  celebrationPopup.classList.add("active");
-  if (celebrationHideTimer !== null) clearTimeout(celebrationHideTimer);
-  celebrationHideTimer = setTimeout(() => closeCelebration(), 10_000);
-
-  // Restart gif background cycling for visual freshness
-  startGifBackground();
-
-  launchUpdaterConfetti();
-  launchConfetti();
-}
-
+// ─── Confetti launch helpers ───────────────────────────────────────────────────
 function launchUpdaterConfetti(): void {
   if (!scoreUpdaterInner) return;
   scoreUpdaterInner.classList.remove("milestone-confetti");
@@ -457,14 +420,6 @@ pointsInput.addEventListener("keydown", (e) => {
 // ─── Export button ────────────────────────────────────────────────────────────
 const btnExport = document.getElementById("btn-export");
 if (btnExport) btnExport.addEventListener("click", exportJourney);
-
-// ─── Celebration close button ─────────────────────────────────────────────────
-celebrationClose.addEventListener("click", closeCelebration);
-
-const celebrationBackdrop = document.getElementById("celebration-backdrop") as HTMLElement;
-if (celebrationBackdrop) {
-  celebrationBackdrop.addEventListener("click", closeCelebration);
-}
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 (async () => {
