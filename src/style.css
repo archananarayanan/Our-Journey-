@@ -1,15 +1,30 @@
 @import "tailwindcss";
 
-/* ─── Page background: Nick (orange) & Judy (blue) + white blend ─────────── */
+/* ─── Page background: animated orange → white → blue cycle ─────────────── */
+@keyframes bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .page-bg {
-  background: linear-gradient(160deg,
-    #ffffff 0%,
-    #ddeeff 20%,
-    #b8d4f8 40%,
-    #ffe8cc 65%,
-    #ffd1a0 80%,
-    #ffffff 100%
+  background: linear-gradient(135deg,
+    #ffd6a0,  /* soft orange */
+    #ffe8cc,  /* pale peach */
+    #fff9f2,  /* warm white */
+    #ffffff,  /* pure white */
+    #f0f6ff,  /* cool white */
+    #cce3ff,  /* powder blue */
+    #a8ccf5,  /* soft blue */
+    #cce3ff,  /* powder blue */
+    #f0f6ff,  /* cool white */
+    #ffffff,  /* pure white */
+    #fff9f2,  /* warm white */
+    #ffe8cc,  /* pale peach */
+    #ffd6a0   /* soft orange (loops) */
   );
+  background-size: 400% 400%;
+  animation: bg-shift 18s ease-in-out infinite;
 }
 
 /* ─── Character cards (3D-edged) ─────────────────────────────────────────── */
