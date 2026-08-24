@@ -279,27 +279,13 @@ function animateUpdaterPanel(type: "add" | "lose"): void {
 }
 
 // ─── Milestone reached ────────────────────────────────────────────────────────
-function checkMilestones(): void {
-  const reachedMilestone =
-    Math.floor(currentPoints / MILESTONE_INTERVAL) * MILESTONE_INTERVAL;
+function checkMilestoneOnInput(): void {
+  if (currentPoints === 0 || currentPoints % MILESTONE_INTERVAL !== 0) return;
+  if (currentPoints <= lastCelebratedMilestone) return;
 
-  if (reachedMilestone <= 0 || reachedMilestone <= lastCelebratedMilestone) return;
-
-  const milestonesToCelebrate: number[] = [];
-  for (
-    let milestone = lastCelebratedMilestone + MILESTONE_INTERVAL;
-    milestone <= reachedMilestone;
-    milestone += MILESTONE_INTERVAL
-  ) {
-    milestonesToCelebrate.push(milestone);
-    addMilestoneChip(milestone);
-  }
-
-  lastCelebratedMilestone = reachedMilestone;
-
-  milestonesToCelebrate.forEach((milestone, index) => {
-    setTimeout(() => celebrate(milestone), index * 900);
-  });
+  addMilestoneChip(currentPoints);
+  lastCelebratedMilestone = currentPoints;
+  celebrate(currentPoints);
 }
 
 function addMilestoneChip(milestone: number): void {
@@ -313,16 +299,27 @@ function addMilestoneChip(milestone: number): void {
 }
 
 // ─── Celebration ──────────────────────────────────────────────────────────────
+function closeCelebration(): void {
+  celebrationPopup.classList.add("hidden");
+  if (confettiAnimationFrameId !== null) {
+    cancelAnimationFrame(confettiAnimationFrameId);
+    confettiAnimationFrameId = null;
+  }
+  const ctx = confettiCanvas.getContext("2d");
+  if (ctx) ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  if (celebrationHideTimer !== null) {
+    clearTimeout(celebrationHideTimer);
+    celebrationHideTimer = null;
+  }
+}
+
 function celebrate(milestone: number): void {
   const msg =
     CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
   celebrationMessage.textContent = `${msg} — ${milestone.toLocaleString()} points reached!`;
   celebrationPopup.classList.remove("hidden");
   if (celebrationHideTimer !== null) clearTimeout(celebrationHideTimer);
-  celebrationHideTimer = setTimeout(() => {
-    celebrationPopup.classList.add("hidden");
-    celebrationHideTimer = null;
-  }, 10_000);
+  celebrationHideTimer = setTimeout(() => closeCelebration(), 10_000);
 
   // Restart gif background cycling for visual freshness
   startGifBackground();
@@ -354,7 +351,6 @@ interface Particle {
 }
 
 function launchConfetti(): void {
-  confettiCanvas.classList.remove("hidden");
   const ctx = confettiCanvas.getContext("2d")!;
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
@@ -396,7 +392,6 @@ function launchConfetti(): void {
       confettiAnimationFrameId = requestAnimationFrame(draw);
     } else {
       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      confettiCanvas.classList.add("hidden");
       confettiAnimationFrameId = null;
     }
   }
@@ -440,7 +435,7 @@ btnAdd.addEventListener("click", () => {
   pointsInput.value = "";
   animateUpdaterPanel("add");
   updateDisplay();
-  checkMilestones();
+  checkMilestoneOnInput();
   saveState();
 });
 
@@ -464,13 +459,12 @@ const btnExport = document.getElementById("btn-export");
 if (btnExport) btnExport.addEventListener("click", exportJourney);
 
 // ─── Celebration close button ─────────────────────────────────────────────────
-celebrationClose.addEventListener("click", () => {
-  celebrationPopup.classList.add("hidden");
-  if (celebrationHideTimer !== null) {
-    clearTimeout(celebrationHideTimer);
-    celebrationHideTimer = null;
-  }
-});
+celebrationClose.addEventListener("click", closeCelebration);
+
+const celebrationBackdrop = document.getElementById("celebration-backdrop") as HTMLElement;
+if (celebrationBackdrop) {
+  celebrationBackdrop.addEventListener("click", closeCelebration);
+}
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 (async () => {
