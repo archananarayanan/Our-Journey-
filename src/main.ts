@@ -315,8 +315,8 @@ interface Particle {
 
 function launchConfetti(): void {
   const ctx = confettiCanvas.getContext("2d")!;
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
+  confettiCanvas.width = window.outerWidth;
+  confettiCanvas.height = window.outerHeight;
   if (confettiAnimationFrameId !== null) cancelAnimationFrame(confettiAnimationFrameId);
   const runId = ++confettiRunId;
 
