@@ -1,4 +1,5 @@
 import './style.css';
+import { getCurrentScoreData, updateJourney, type JourneyData } from './json_backend_service';
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 const MAX_POINTS = 10_000;
@@ -35,19 +36,6 @@ const CELEBRATION_MESSAGES: string[] = [
 const STORAGE_KEY = "ourJourney";
 const DATA_PATH = `${BASE}data/journey.json`;
 
-interface JourneyEntry {
-  timestamp: string;
-  action: "add" | "lose";
-  points: number;
-  totalAfter: number;
-}
-
-interface JourneyData {
-  totalScore: number;
-  lastCelebratedMilestone: number;
-  log: JourneyEntry[];
-}
-
 function loadState(): JourneyData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -58,22 +46,37 @@ function loadState(): JourneyData {
   return { totalScore: 0, lastCelebratedMilestone: 0, log: [] };
 }
 
-function saveState(): void {
-  const data: JourneyData = {
+function buildJourneyData(): JourneyData {
+  return {
     totalScore: currentPoints,
     lastCelebratedMilestone,
     log: journeyLog,
   };
+}
+
+function saveLocalState(data: JourneyData): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let journeySyncChain: Promise<void> = Promise.resolve();
+
+function saveState(): void {
+  const data = buildJourneyData();
+  saveLocalState(data);
+  journeySyncChain = journeySyncChain
+    .then(async () => {
+      try {
+        await updateJourney(data);
+      } catch {
+        // remote sync unavailable — keep local state intact
+      }
+    })
+    .catch(() => undefined);
 }
 
 /** Trigger a download of the current journey.json so users can commit it back. */
 function exportJourney(): void {
-  const data: JourneyData = {
-    totalScore: currentPoints,
-    lastCelebratedMilestone,
-    log: journeyLog,
-  };
+  const data = buildJourneyData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -89,24 +92,44 @@ let currentPoints = 0;
 let lastCelebratedMilestone = 0;
 
 async function initState(): Promise<void> {
-  const local = loadState();
-  if (local.totalScore === 0 && local.log.length === 0) {
-    try {
-      const res = await fetch(DATA_PATH);
-      if (res.ok) {
-        const seed = (await res.json()) as JourneyData;
-        currentPoints = seed.totalScore ?? 0;
-        lastCelebratedMilestone = seed.lastCelebratedMilestone ?? 0;
-        journeyLog = seed.log ?? [];
-        return;
-      }
-    } catch {
-      // network unavailable — stay at defaults
+  try {
+    const remote = await getCurrentScoreData();
+    if (remote) {
+      currentPoints = remote.totalScore ?? 0;
+      lastCelebratedMilestone = remote.lastCelebratedMilestone ?? 0;
+      journeyLog = remote.log ?? [];
+      saveLocalState(buildJourneyData());
+      return;
     }
+  } catch {
+    // remote unavailable — fall back below
   }
-  currentPoints = local.totalScore;
-  lastCelebratedMilestone = local.lastCelebratedMilestone;
-  journeyLog = local.log;
+
+  const local = loadState();
+  if (local.totalScore !== 0 || local.log.length > 0) {
+    currentPoints = local.totalScore;
+    lastCelebratedMilestone = local.lastCelebratedMilestone;
+    journeyLog = local.log;
+    return;
+  }
+
+  try {
+    const res = await fetch(DATA_PATH);
+    if (res.ok) {
+      const seed = (await res.json()) as JourneyData;
+      currentPoints = seed.totalScore ?? 0;
+      lastCelebratedMilestone = seed.lastCelebratedMilestone ?? 0;
+      journeyLog = seed.log ?? [];
+      saveLocalState(buildJourneyData());
+      return;
+    }
+  } catch {
+    // network unavailable — stay at defaults
+  }
+
+  currentPoints = 0;
+  lastCelebratedMilestone = 0;
+  journeyLog = [];
 }
 
 
